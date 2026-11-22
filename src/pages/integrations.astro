@@ -1,0 +1,83 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import NextSteps from '@/components/platform/NextSteps.astro'
+import PlatformHero from '@/components/platform/PlatformHero.astro'
+import FeatureCard from '@/components/ui/FeatureCard.astro'
+import LogoTile from '@/components/ui/LogoTile.astro'
+import { nextSteps } from '@/data/platform-pages'
+import {
+  integrationPath,
+  integrations,
+  integrationsHub,
+} from '@/data/integrations'
+import {
+  organization,
+  pageBreadcrumbs,
+  softwareId,
+  webPage,
+} from '@/data/structured-data'
+
+const absolute = (path: string) => new URL(path, Astro.site).href
+const steps = nextSteps.filter((step) => step.href !== '/integrations')
+---
+
+<BaseLayout
+  title={integrationsHub.seo.title}
+  description={integrationsHub.seo.description}
+  jsonLd={[
+    organization(),
+    webPage({
+      path: '/integrations',
+      name: integrationsHub.seo.title,
+      description: integrationsHub.seo.description,
+      type: 'CollectionPage',
+      about: softwareId,
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: integrations.length,
+        itemListElement: integrations.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: absolute(integrationPath(item)),
+          name: item.hero.title,
+        })),
+      },
+    }),
+    pageBreadcrumbs(integrationsHub.title, '/integrations'),
+  ]}
+>
+  <PlatformHero
+    hero={{ title: integrationsHub.title, tagline: integrationsHub.tagline }}
+  />
+  <section
+    class="section"
+    aria-labelledby="integrations-list-title"
+  >
+    <h2
+      class="visually-hidden"
+      id="integrations-list-title"
+    >
+      Services wired by Unoff
+    </h2>
+    <div class="mosaic__grid">
+      {integrations.map((item, index) => (
+        <FeatureCard
+          id={`integration-${item.slug}`}
+          title={item.name}
+          text={item.summary}
+          tag={`${item.category} · ${item.kind}`}
+          href={integrationPath(item)}
+        >
+          <div class="illustration-lines">
+            <LogoTile
+              logo={item.slug}
+              tilt={item.tilt}
+              index={index}
+            />
+          </div>
+        </FeatureCard>
+      ))}
+    </div>
+  </section>
+  <NextSteps steps={steps} />
+</BaseLayout>

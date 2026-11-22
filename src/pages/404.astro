@@ -1,0 +1,21 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import NextSteps from '@/components/platform/NextSteps.astro'
+import PlatformHero from '@/components/platform/PlatformHero.astro'
+---
+
+<BaseLayout
+  title="Page not found — Unoff"
+  description="This page doesn't exist or has moved. Start from the home page, build a Figma or Penpot plugin, or browse the services Unoff wires for you."
+  noindex
+>
+  <PlatformHero
+    hero={{
+      title: 'Page not found',
+      tagline:
+        "This page doesn't exist or has moved. Here are the best places to pick up from.",
+      cta: { label: 'Back to home', href: '/' },
+    }}
+  />
+  <NextSteps title="Where to go next" />
+</BaseLayout>

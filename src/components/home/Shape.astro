@@ -1,0 +1,352 @@
+---
+import BarAccount from '@/assets/decor/figma-ui/bar-account.svg'
+import BarBrush from '@/assets/decor/figma-ui/bar-brush.svg'
+import BarHelp from '@/assets/decor/figma-ui/bar-help.svg'
+import Close from '@/assets/decor/figma-ui/close.svg'
+import Resize from '@/assets/decor/figma-ui/resize.svg'
+import shardsWide from '@/assets/decor/shards-wide.svg'
+import EditorButton from '@/components/ui/EditorButton.astro'
+import FeatureCard from '@/components/ui/FeatureCard.astro'
+import LogoTile from '@/components/ui/LogoTile.astro'
+import { figmaUiStyle, type Editor } from '@/data/editor-ui'
+import { shape } from '@/data/home'
+
+/** Centre (px, in the 584 × 210 Figma group) and tilt of each command pill. */
+const collage = [
+  { x: 192, y: 168, tilt: 2 },
+  { x: 438, y: 37, tilt: -1 },
+  { x: 448, y: 153, tilt: 2 },
+  { x: 123, y: 38, tilt: 2 },
+  { x: 360, y: 82, tilt: 1 },
+  { x: 199, y: 104, tilt: -2 },
+]
+
+/** Buttons around the import pill: offset from its centre (px) and tilt. */
+const floating: { editor: Editor; x: number; y: string; tilt: number }[] = [
+  { editor: 'figma', x: 71, y: '-14px', tilt: 2 },
+  { editor: 'penpot', x: 80, y: 'calc(100% + 33px)', tilt: -2 },
+  { editor: 'sketch', x: -70, y: '-36px', tilt: -2 },
+  { editor: 'framer', x: -61, y: 'calc(100% + 18px)', tilt: 2 },
+]
+
+const editors: Editor[] = ['figma', 'penpot', 'sketch', 'framer']
+---
+
+<section
+  id="shape"
+  class="section mosaic"
+  aria-labelledby="shape-title"
+>
+  <div class="mosaic__grid">
+    <div class="mosaic__title title-card">
+      <h2
+        class="t-section-title"
+        id="shape-title"
+      >
+        {shape.title}
+      </h2>
+      <p class="t-accent">{shape.intro}</p>
+    </div>
+
+    <FeatureCard
+      class="mosaic__wide"
+      title={shape.boilerplate.title}
+      text={shape.boilerplate.text}
+      media="bottom"
+    >
+      <div class="illustration-lines">
+        <div
+          class="shape__window"
+          style={figmaUiStyle}
+        >
+          <div class="shape__bar">
+            <span class="shape__title">
+              <span class="shape__placeholder"></span>
+              Your Awesome Plugin
+            </span>
+            <Close />
+          </div>
+          <div class="shape__bar shape__bar--bottom">
+            <BarBrush />
+            <BarAccount />
+            <BarHelp />
+            <Resize class="shape__resize" />
+          </div>
+          <span
+            class="shape__stacked illustration-fit"
+            style="--x:-29px;--y:-16px"
+          >
+            <LogoTile
+              logo="react"
+              tilt={-15}
+              decorative
+            />
+          </span>
+          <span
+            class="shape__stacked illustration-fit"
+            style="--x:29px;--y:16px"
+          >
+            <LogoTile
+              logo="vite"
+              tilt={15}
+              index={1}
+              decorative
+            />
+          </span>
+        </div>
+      </div>
+    </FeatureCard>
+
+    <FeatureCard
+      title={shape.cli.title}
+      text={shape.cli.text}
+      media="bottom"
+    >
+      <div class="illustration-lines">
+        <div class="shape__collage illustration-fit">
+          {shape.cli.commands.map((command, index) => {
+            const [tool, verb, ...args] = command.split(' ')
+            const { x, y, tilt } = collage[index]
+            return (
+              <p
+                class="code-pill"
+                style={`--x:${x}px;--y:${y}px;--tilt:${tilt}deg`}
+              >
+                <span>$</span>
+                <span>
+                  <span class="code-snippet__command">{tool}</span>{' '}
+                  <span class="code-snippet__verb">{verb}</span>
+                  {args.length > 0 && (
+                    <>
+                      {' '}
+                      <span class="code-snippet__argument">
+                        {args.join(' ')}
+                      </span>
+                    </>
+                  )}
+                </span>
+              </p>
+            )
+          })}
+        </div>
+      </div>
+    </FeatureCard>
+
+    <FeatureCard
+      title={shape.components.title}
+      text={shape.components.text}
+      media="bottom"
+    >
+      <div class="illustration-lines">
+        <div class="shape__import illustration-fit">
+          <span
+            class="shards shape__import-shards"
+            style={`mask-image:url(${shardsWide.src})`}
+          ></span>
+          <p class="code-pill">
+            <span>
+              <span class="code-snippet__keyword">import</span>{' '}
+              <span class="code-snippet__argument">{'{'}</span>{' '}
+              <span class="code-snippet__command">Button</span>{' '}
+              <span class="code-snippet__argument">{'}'}</span>{' '}
+              <span class="code-snippet__keyword">from</span>{' '}
+              <span class="code-snippet__string">@unoff/ui</span>
+            </span>
+          </p>
+          {floating.map(({ editor, x, y, tilt }) => (
+            <EditorButton
+              class="shape__floating"
+              editor={editor}
+              tilt={tilt}
+              style={`--x:${x}px;--y:${y}`}
+            />
+          ))}
+        </div>
+      </div>
+    </FeatureCard>
+
+    <FeatureCard
+      title={shape.library.title}
+      text={shape.library.text}
+      media="bottom"
+    >
+      <div class="illustration-lines">
+        <div class="shape__library">
+          {editors.map((editor, index) => (
+            <span class="shape__editor">
+              <LogoTile
+                logo={editor}
+                size={32}
+                index={index}
+                decorative
+              />
+            </span>
+          ))}
+          {(['light', 'dark'] as const).map((scheme) =>
+            editors.map((editor) => (
+              <span class={`shape__preview shape__preview--${scheme}`}>
+                <EditorButton
+                  editor={editor}
+                  scheme={scheme}
+                />
+              </span>
+            ))
+          )}
+        </div>
+      </div>
+    </FeatureCard>
+  </div>
+</section>
+
+<style>
+  /* Plugin window (Figma "Skeleton"): Figma's light UI in both modes. */
+  .shape__window {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    justify-content: space-between;
+    inset: var(--scale-pos-large);
+    box-shadow: var(--elevation-500-modal-window);
+    border-radius: var(--border-radius-xxlarge);
+    background-color: var(--figma-window);
+    color: var(--figma-ink);
+    font-weight: var(--text-weight-text);
+    font-size: var(--type-size-02);
+    font-family: var(--font-text);
+  }
+
+  .shape__bar {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-gap-200);
+    border-bottom: var(--stroke-width-thin) solid var(--figma-border);
+    padding: 0 var(--space-inset-400);
+    min-height: var(--control-size-1000);
+  }
+
+  .shape__bar--bottom {
+    justify-content: flex-end;
+    border-top: var(--stroke-width-thin) solid var(--figma-border);
+    border-bottom: 0;
+  }
+
+  .shape__bar :global(svg) {
+    flex: none;
+    width: var(--control-icon-600);
+    height: var(--control-icon-600);
+  }
+
+  .shape__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-gap-200);
+    white-space: nowrap;
+  }
+
+  .shape__placeholder {
+    border: var(--stroke-width-thick) dashed var(--figma-placeholder-border);
+    border-radius: var(--border-radius-small);
+    background-color: var(--figma-placeholder);
+    width: var(--control-size-400);
+    height: var(--control-size-400);
+  }
+
+  .shape__bar :global(.shape__resize) {
+    position: absolute;
+    right: var(--space-inset-100);
+    bottom: var(--space-inset-100);
+  }
+
+  .shape__stacked {
+    position: absolute;
+    top: calc(50% + var(--y));
+    left: calc(50% + var(--x));
+    translate: -50% -50%;
+  }
+
+  /* Six pills overlapping as in Figma "Shape/CLI", cropped by the frame. */
+  .shape__collage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 584px;
+    height: 210px;
+  }
+
+  .shape__collage .code-pill {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    translate: -50% -50%;
+    rotate: var(--tilt);
+  }
+
+  .shape__import {
+    width: 100%;
+    max-width: 496px;
+  }
+
+  .shape__import-shards {
+    position: absolute;
+    inset: -42% -6% -41% -6%;
+  }
+
+  .shape__import .code-pill {
+    position: relative;
+  }
+
+  @container (max-width: 440px) {
+    .shape__import {
+      flex: none;
+      width: 440px;
+      max-width: none;
+    }
+
+    .shape__window {
+      inset: var(--space-inset-400);
+    }
+  }
+
+  .shape__import :global(.shape__floating) {
+    position: absolute;
+    top: var(--y);
+    left: calc(50% + var(--x));
+    translate: -50% -50%;
+  }
+
+  /* Four editors side by side, wider than the frame on purpose: the last
+     column peeks out, as in Figma "Shape/Figma Library". */
+  .shape__library {
+    display: grid;
+    position: absolute;
+    grid-template-rows: var(--control-size-1200) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: repeat(4, minmax(max-content, 1fr));
+    inset: var(--scale-pos-large);
+    gap: var(--space-gap-400);
+    min-width: 696px;
+    min-height: 232px;
+  }
+
+  .shape__editor {
+    display: grid;
+    position: relative;
+    place-items: center;
+  }
+
+  .shape__preview {
+    display: grid;
+    place-items: center;
+    border: var(--stroke-width-thin) solid var(--illustration-light-border);
+    border-radius: var(--site-radius-card);
+    background-color: var(--illustration-light);
+    padding: var(--space-inset-400);
+  }
+
+  .shape__preview--dark {
+    border-color: var(--illustration-dark-border);
+    background-color: var(--illustration-dark);
+  }
+</style>

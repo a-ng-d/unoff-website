@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Audience from '@/components/home/Audience.astro'
+import Author from '@/components/home/Author.astro'
+import Faq from '@/components/home/Faq.astro'
+import Jumbotron from '@/components/home/Jumbotron.astro'
+import Pricing from '@/components/home/Pricing.astro'
+import Shape from '@/components/home/Shape.astro'
+import Summary from '@/components/home/Summary.astro'
+import Supercharge from '@/components/home/Supercharge.astro'
+import Wire from '@/components/home/Wire.astro'
+import TableSection from '@/components/ui/TableSection.astro'
+import { site } from '@/config/site'
+import { compare } from '@/data/home'
+import { homeFaq } from '@/data/faq'
+import {
+  faqPage,
+  organization,
+  person,
+  softwareApplication,
+  softwareId,
+  webPage,
+  website,
+} from '@/data/structured-data'
+
+const table = {
+  id: 'compare',
+  title: compare.title,
+  intro: compare.intro,
+  caption: 'Time to set up a production-ready plugin, without and with Unoff',
+  rowHeader: 'Task',
+  columns: compare.columns,
+  rows: [
+    ...compare.rows.map((row) => ({
+      label: row.task,
+      href: row.href,
+      values: [row.without, row.with],
+    })),
+    {
+      label: compare.total.label,
+      values: [compare.total.without, compare.total.with],
+    },
+  ],
+}
+---
+
+<BaseLayout
+  jsonLd={[
+    organization(),
+    person(),
+    website(),
+    softwareApplication(),
+    webPage({
+      path: '/',
+      name: site.defaultTitle,
+      description: site.defaultDescription,
+      about: softwareId,
+    }),
+    faqPage(homeFaq),
+  ]}
+>
+  <Jumbotron />
+  <Summary />
+  <Shape />
+  <Wire />
+  <Supercharge />
+  <Audience />
+  <TableSection table={table} />
+  <Pricing />
+  <Faq items={homeFaq} />
+  <Author />
+</BaseLayout>

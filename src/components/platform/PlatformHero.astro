@@ -1,0 +1,85 @@
+---
+import ArrowRight from '@lucide/astro/icons/move-right'
+import Button from '@/components/ui/Button.astro'
+import LineGrid from '@/components/ui/LineGrid.astro'
+
+interface Props {
+  hero: {
+    title: string
+    tagline?: string
+    cta?: { label: string; href: string }
+  }
+}
+
+const { hero } = Astro.props
+---
+
+<section
+  class="platform-hero"
+  aria-labelledby="platform-hero-title"
+>
+  <LineGrid
+    class="platform-hero__grid"
+    count={40}
+  >
+    <div class="platform-hero__content">
+      <slot name="visual" />
+      <div class="platform-hero__texts">
+        <h1
+          class="t-section-title"
+          id="platform-hero-title"
+        >
+          {hero.title}
+        </h1>
+        {hero.tagline && <p class="t-tagline">{hero.tagline}</p>}
+      </div>
+      {hero.cta && (
+        <Button
+          href={hero.cta.href}
+          variant="primary"
+        >
+          {hero.cta.label}
+          <ArrowRight slot="icon-end" />
+        </Button>
+      )}
+    </div>
+  </LineGrid>
+</section>
+
+<style>
+  .platform-hero {
+    padding: var(--space-inset-200) var(--layout-gutter) 0;
+  }
+
+  .platform-hero :global(.platform-hero__grid) {
+    min-height: 560px;
+  }
+
+  .platform-hero__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-gap-800);
+    padding: var(--space-inset-800);
+    width: 100%;
+    max-width: calc(var(--layout-content-max) + 2 * var(--space-inset-800));
+    text-align: center;
+  }
+
+  .platform-hero__texts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gap-400);
+  }
+
+  @media (max-width: 639.98px) {
+    .platform-hero :global(.platform-hero__grid) {
+      min-height: 440px;
+    }
+
+    .platform-hero__content {
+      padding: var(--space-inset-600) var(--space-inset-400);
+    }
+  }
+</style>

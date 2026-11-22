@@ -1,0 +1,70 @@
+---
+import FeatureCard from '@/components/ui/FeatureCard.astro'
+import LogoTile from '@/components/ui/LogoTile.astro'
+import { wire } from '@/data/home'
+import { integrationPath, integrations } from '@/data/integrations'
+---
+
+<section
+  id="wire"
+  class="section mosaic"
+  aria-labelledby="wire-title"
+>
+  <div class="mosaic__grid wire__grid">
+    <div class="mosaic__title wire__title title-card">
+      <h2
+        class="t-section-title"
+        id="wire-title"
+      >
+        {wire.title}
+      </h2>
+      <p class="t-accent">{wire.intro}</p>
+    </div>
+
+    {integrations.map((item, index) => (
+      <FeatureCard
+        id={`wire-${item.slug}`}
+        title={item.name}
+        text={item.summary}
+        tag={item.kind}
+        href={integrationPath(item)}
+      >
+        <div class="illustration-lines">
+          <LogoTile
+            logo={item.slug}
+            tilt={item.tilt}
+            index={index}
+          />
+        </div>
+      </FeatureCard>
+    ))}
+  </div>
+</section>
+
+<style>
+  .wire__grid {
+    --mosaic-row: 540px;
+  }
+
+  .wire__title {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  @media (max-width: 1023.98px) {
+    .wire__title {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* The title sits alone on the first row, as in Figma; cards fill rows 2–3. */
+  @media (min-width: 1024px) {
+    .wire__grid > :global(.feature:nth-child(-n + 4)) {
+      grid-row: 2;
+    }
+
+    .wire__grid > :global(.feature:nth-child(n + 5)) {
+      grid-row: 3;
+    }
+  }
+</style>

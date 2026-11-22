@@ -1,0 +1,8 @@
+---
+import PlatformPageView from '@/components/platform/PlatformPageView.astro'
+import { platformPages } from '@/data/platform-pages'
+
+const page = platformPages.find((item) => item.path === '/penpot')!
+---
+
+<PlatformPageView page={page} />

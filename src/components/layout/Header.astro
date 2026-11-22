@@ -1,0 +1,288 @@
+---
+import Logotype from '@/assets/brand/logotype-header.svg'
+import SunIcon from '@lucide/astro/icons/sun'
+import MoonIcon from '@lucide/astro/icons/moon'
+import ArrowRight from '@lucide/astro/icons/move-right'
+import Button from '@/components/ui/Button.astro'
+import TertiaryLink from '@/components/ui/TertiaryLink.astro'
+import { links, mainNav, site } from '@/config/site'
+
+const current = Astro.url.pathname.replace(/\.html$/, '')
+---
+
+<header
+  class="header"
+  data-header
+>
+  <nav
+    class="header__bar"
+    aria-label="Main"
+  >
+    <a
+      class="header__logo"
+      href="/"
+      aria-label={`${site.name} — home`}
+    >
+      <Logotype
+        aria-hidden="true"
+        width={154}
+        height={34}
+      />
+    </a>
+
+    <div class="header__actions">
+      <button
+        class="header__theme header__theme--compact icon-button icon-button--default"
+        type="button"
+        aria-label="Switch to dark mode"
+        hidden
+        data-theme-toggle
+      >
+        <MoonIcon class="header__theme-dark" />
+        <SunIcon class="header__theme-light" />
+      </button>
+
+      <button
+        class="header__menu-toggle text-button text-button--tertiary text-button--large"
+        type="button"
+        aria-expanded="false"
+        aria-controls="header-links"
+        hidden
+        data-menu-toggle
+      >
+        <!-- Both labels share one grid cell: the button keeps the width of the longest. -->
+        <span class="header__menu-label header__menu-label--open">Menu</span>
+        <span class="header__menu-label header__menu-label--close">Close</span>
+      </button>
+    </div>
+
+    <div
+      class="header__links"
+      id="header-links"
+    >
+      {mainNav.map((item) => (
+        <TertiaryLink
+          href={item.href}
+          label={item.label}
+          current={current === item.href}
+        />
+      ))}
+
+      <!-- Hidden without JS: switching modes needs a script. -->
+      <button
+        class="header__theme header__theme--inline icon-button icon-button--default"
+        type="button"
+        aria-label="Switch to dark mode"
+        hidden
+        data-theme-toggle
+      >
+        <MoonIcon class="header__theme-dark" />
+        <SunIcon class="header__theme-light" />
+      </button>
+
+      <Button
+        href={links.docs}
+        variant="primary"
+      >
+        Get started
+        <ArrowRight slot="icon-end" />
+      </Button>
+    </div>
+  </nav>
+</header>
+
+<script>
+  import { currentScheme, saveScheme } from '@/scripts/scheme'
+
+  const header = document.querySelector<HTMLElement>('[data-header]')
+  const toggle = header?.querySelector<HTMLButtonElement>('[data-menu-toggle]')
+  const themeToggles = header
+    ? Array.from(
+        header.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')
+      )
+    : []
+
+  if (header && toggle) {
+    header.dataset.enhanced = ''
+    toggle.hidden = false
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') !== 'true'
+      toggle.setAttribute('aria-expanded', String(open))
+    })
+  }
+
+  const sync = () => {
+    const dark = currentScheme() === 'dark'
+    themeToggles.forEach((button) => {
+      button.setAttribute(
+        'aria-label',
+        dark ? 'Switch to light mode' : 'Switch to dark mode'
+      )
+      button.setAttribute('aria-pressed', String(dark))
+    })
+  }
+  themeToggles.forEach((button) => {
+    button.hidden = false
+    button.addEventListener('click', () => {
+      saveScheme(currentScheme() === 'dark' ? 'light' : 'dark')
+      sync()
+    })
+  })
+  sync()
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return
+    if (toggle?.getAttribute('aria-expanded') === 'true') {
+      toggle.setAttribute('aria-expanded', 'false')
+      toggle.focus()
+    }
+  })
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: var(--space-inset-200) var(--layout-gutter) 0;
+  }
+
+  .header__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-gap-200);
+    border: var(--stroke-width-thin) solid var(--site-border-strong);
+    border-radius: var(--site-radius-pill);
+    background-color: var(--site-surface);
+    padding: var(--space-inset-100) var(--space-inset-200)
+      var(--space-inset-100) var(--space-inset-400);
+    min-height: var(--control-size-1600);
+  }
+
+  .header__logo {
+    display: block;
+    color: var(--site-ink);
+  }
+
+  .header__logo :global(svg) {
+    width: 148px;
+    height: auto;
+  }
+
+  .header__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-gap-600);
+  }
+
+  .header__links :global([aria-current='page']) {
+    position: relative;
+  }
+
+  .header__links :global([aria-current='page'])::after {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    translate: -50% 0;
+    border-radius: 4px;
+    background-color: var(--site-ink);
+    width: 16px;
+    height: 4px;
+    content: '';
+  }
+
+  .header__theme {
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--icon-button-base-icon-color);
+  }
+
+  .header__theme :global(svg) {
+    width: var(--icon-button-base-icon-width);
+    height: var(--icon-button-base-icon-width);
+  }
+
+  .header__theme :global(.header__theme-light) {
+    display: none;
+  }
+
+  :global([data-mode$='dark']) .header__theme :global(.header__theme-light) {
+    display: block;
+  }
+
+  :global([data-mode$='dark']) .header__theme :global(.header__theme-dark) {
+    display: none;
+  }
+
+  .header__menu-toggle {
+    display: inline-grid;
+    justify-items: center;
+  }
+
+  .header__menu-label {
+    grid-area: 1 / 1;
+  }
+
+  .header__menu-toggle[aria-expanded='false'] .header__menu-label--close,
+  .header__menu-toggle[aria-expanded='true'] .header__menu-label--open {
+    visibility: hidden;
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-gap-200);
+  }
+
+  @media (min-width: 800px) {
+    .header__actions {
+      display: none;
+    }
+  }
+
+  @media (max-width: 799.98px) {
+    .header__bar {
+      border-radius: var(--site-radius-card);
+      padding-right: var(--space-inset-400);
+      min-height: 0;
+    }
+
+    .header__logo,
+    .header__actions {
+      display: flex;
+      align-items: center;
+      min-height: calc(
+        var(--control-size-1600) - 2 * var(--space-inset-100) - 2 *
+          var(--stroke-width-thin)
+      );
+    }
+
+    .header__theme--inline {
+      display: none;
+    }
+
+    .header[data-enhanced] .header__links {
+      display: none;
+    }
+
+    .header[data-enhanced]:has([aria-expanded='true']) .header__links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-bottom: var(--space-inset-200);
+      width: 100%;
+      max-height: calc(100dvh - 7rem);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      text-align: left;
+    }
+
+    .header__links :global(.text-button--primary) {
+      align-self: stretch;
+    }
+
+  }
+</style>

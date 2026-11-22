@@ -1,0 +1,78 @@
+---
+/** A primary button in an editor's own UI ("Action label"), for illustrations. */
+import Plus from '@/assets/decor/figma-ui/plus.svg'
+import { editorButtons, type Editor } from '@/data/editor-ui'
+
+interface Props {
+  editor: Editor
+  scheme?: 'light' | 'dark'
+  /** Figma's greyed-out button, as shown next to a Pro chip. */
+  disabled?: boolean
+  /** Degrees. */
+  tilt?: number
+  class?: string
+  style?: string
+}
+
+const {
+  editor,
+  scheme = 'light',
+  disabled = false,
+  tilt = 0,
+  class: className,
+  style = '',
+} = Astro.props
+const button = editorButtons[editor]
+const paint = disabled
+  ? { background: 'var(--figma-disabled)', ink: 'var(--figma-disabled-ink)' }
+  : button[scheme]
+---
+
+<span
+  class:list={[
+    'editor-button',
+    {
+      'editor-button--compact': button.compact,
+      'editor-button--uppercase': button.uppercase,
+    },
+    className,
+  ]}
+  style={`--editor-button:${paint.background};--editor-button-ink:${paint.ink};--editor-button-radius:var(--border-radius-${button.radius});--tilt:${tilt}deg;${style}`}
+>
+  <Plus aria-hidden="true" />
+  Action label
+</span>
+
+<style>
+  .editor-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-gap-100);
+    rotate: var(--tilt);
+    border-radius: var(--editor-button-radius);
+    background-color: var(--editor-button);
+    padding: 0 var(--space-inset-300) 0 var(--space-inset-200);
+    height: var(--control-size-800);
+    color: var(--editor-button-ink);
+    font-weight: var(--text-weight-text);
+    font-size: var(--type-size-02);
+    line-height: 1;
+    font-family: var(--font-text);
+    white-space: nowrap;
+  }
+
+  .editor-button--compact {
+    padding-right: var(--space-inset-200);
+    height: var(--control-size-600);
+  }
+
+  .editor-button--uppercase {
+    text-transform: uppercase;
+  }
+
+  .editor-button :global(svg) {
+    flex: none;
+    width: var(--control-icon-600);
+    height: var(--control-icon-600);
+  }
+</style>

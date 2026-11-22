@@ -1,0 +1,79 @@
+---
+import { Image } from 'astro:assets'
+import portrait from '@/assets/brand/author-aurelien-grimaud.jpg'
+import Tag from '@/components/ui/Tag.astro'
+import { site } from '@/config/site'
+import { author } from '@/data/home'
+---
+
+<section
+  class="section author"
+  aria-labelledby="author-title"
+>
+  <div class="author__card title-card title-card--straight">
+    <Image
+      class="author__portrait"
+      src={portrait}
+      alt={site.author.name}
+      width={166}
+      height={166}
+      loading="lazy"
+    />
+    <div class="author__text">
+      <h2
+        class="t-section-title"
+        id="author-title"
+      >
+        “{author.quote}”
+      </h2>
+      <p class="t-accent">{author.bio}</p>
+      <div class="author__links">
+        {author.links.map((link) => (
+          <Tag href={link.href}>{link.label}</Tag>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .author__card {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-gap-800);
+    padding: var(--layout-section-gap) var(--space-inset-800);
+    min-height: 640px;
+  }
+
+  .author__card :global(.author__portrait) {
+    flex-shrink: 0;
+    border-radius: var(--site-radius-card);
+    width: 166px;
+    height: 166px;
+    object-fit: cover;
+  }
+
+  .author__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-gap-400);
+    max-width: var(--layout-content-max);
+  }
+
+  .author__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-gap-200);
+  }
+
+  @media (max-width: 799.98px) {
+    .author__card {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: var(--space-inset-600);
+      min-height: 0;
+    }
+  }
+</style>

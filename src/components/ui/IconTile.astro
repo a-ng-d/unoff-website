@@ -1,0 +1,52 @@
+---
+/** Rounded brand tile holding a Lucide icon. Decorative: the card title carries the meaning. */
+import BadgeDollarSign from '@lucide/astro/icons/badge-dollar-sign'
+import BookOpen from '@lucide/astro/icons/book-open'
+import Cone from '@lucide/astro/icons/cone'
+import Pencil from '@lucide/astro/icons/pencil'
+import Terminal from '@lucide/astro/icons/terminal'
+import Waypoints from '@lucide/astro/icons/waypoints'
+import Zap from '@lucide/astro/icons/zap'
+import type { IconId } from '@/data/blocks'
+
+interface Props {
+  icon: IconId
+}
+
+const icons = {
+  'badge-dollar-sign': BadgeDollarSign,
+  'book-open': BookOpen,
+  cone: Cone,
+  pencil: Pencil,
+  terminal: Terminal,
+  waypoints: Waypoints,
+  zap: Zap,
+} satisfies Record<IconId, unknown>
+
+const Icon = icons[Astro.props.icon]
+---
+
+<span
+  class="icon-tile"
+  aria-hidden="true"
+>
+  <Icon />
+</span>
+
+<style>
+  .icon-tile {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: var(--site-radius-card);
+    background-color: var(--color-background-brand-default);
+    width: var(--control-size-1200);
+    height: var(--control-size-1200);
+    color: var(--color-icon-on-brand-default);
+  }
+
+  .icon-tile :global(svg) {
+    width: var(--control-icon-600);
+    height: var(--control-icon-600);
+  }
+</style>

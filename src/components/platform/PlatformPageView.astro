@@ -1,0 +1,92 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Faq from '@/components/home/Faq.astro'
+import NextSteps from '@/components/platform/NextSteps.astro'
+import PlatformHero from '@/components/platform/PlatformHero.astro'
+import LogoTile from '@/components/ui/LogoTile.astro'
+import StepsSection from '@/components/ui/StepsSection.astro'
+import TableSection from '@/components/ui/TableSection.astro'
+import TextCardsSection from '@/components/ui/TextCardsSection.astro'
+import { nextSteps, platformPages, type PlatformPage } from '@/data/platform-pages'
+import {
+  faqPage,
+  howTo,
+  organization,
+  pageBreadcrumbs,
+  softwareId,
+  webPage,
+} from '@/data/structured-data'
+
+interface Props {
+  page: PlatformPage
+}
+
+const { page } = Astro.props
+const other = platformPages.find((item) => item.path !== page.path)!
+const logo = page.platform === 'Figma' ? 'figma' : 'penpot'
+
+const steps = [
+  {
+    icon: 'pencil' as const,
+    title: other.hero.title,
+    label: `Go to ${other.platform}`,
+    href: other.path,
+  },
+  ...nextSteps,
+]
+
+const jsonLd = [
+  organization(),
+  webPage({
+    path: page.path,
+    name: page.seo.title,
+    description: page.seo.description,
+    about: softwareId,
+  }),
+  howTo({
+    path: page.path,
+    name: page.hero.title,
+    description: page.overview,
+    steps: page.build.steps,
+  }),
+  pageBreadcrumbs(page.hero.title, page.path),
+  faqPage(page.faq),
+]
+---
+
+<BaseLayout
+  title={page.seo.title}
+  description={page.seo.description}
+  jsonLd={jsonLd}
+>
+  <PlatformHero hero={page.hero}>
+    <LogoTile
+      slot="visual"
+      logo={logo}
+      tilt={-4}
+      decorative
+    />
+  </PlatformHero>
+  <TextCardsSection
+    cards={[
+      {
+        title: `${page.platform} plugins with Unoff in short`,
+        paragraphs: [page.overview],
+      },
+    ]}
+  />
+  <StepsSection
+    id={`${logo}-build`}
+    steps={page.build}
+  />
+  <TableSection table={page.table} />
+  <StepsSection
+    id={`${logo}-publish`}
+    steps={page.publish}
+  />
+  <Faq
+    items={page.faq}
+    intro={`Building a ${page.platform} plugin with Unoff, in a few answers.`}
+  />
+  <NextSteps steps={steps} />
+</BaseLayout>

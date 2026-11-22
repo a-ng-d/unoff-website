@@ -1,0 +1,127 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Faq from '@/components/home/Faq.astro'
+import NextSteps from '@/components/platform/NextSteps.astro'
+import PlatformHero from '@/components/platform/PlatformHero.astro'
+import LogoTile from '@/components/ui/LogoTile.astro'
+import StepsSection from '@/components/ui/StepsSection.astro'
+import TableSection from '@/components/ui/TableSection.astro'
+import Tag from '@/components/ui/Tag.astro'
+import TextCardsSection from '@/components/ui/TextCardsSection.astro'
+import {
+  integrationBySlug,
+  integrationPath,
+  integrationsHub,
+  type Integration,
+} from '@/data/integrations'
+import {
+  breadcrumbs,
+  faqPage,
+  howTo,
+  organization,
+  softwareId,
+  webPage,
+} from '@/data/structured-data'
+
+interface Props {
+  item: Integration
+}
+
+const { item } = Astro.props
+const path = integrationPath(item)
+
+const steps = [
+  ...item.related.map((slug) => {
+    const related = integrationBySlug(slug)
+    return {
+      icon: 'waypoints' as const,
+      title: related.name,
+      label: related.category,
+      href: integrationPath(related),
+    }
+  }),
+  {
+    icon: 'pencil' as const,
+    title: 'Build a Figma plugin',
+    label: 'Start on Figma',
+    href: '/figma',
+  },
+  {
+    icon: 'pencil' as const,
+    title: 'Build a Penpot plugin',
+    label: 'Start on Penpot',
+    href: '/penpot',
+  },
+]
+
+const jsonLd = [
+  organization(),
+  webPage({
+    path,
+    name: item.seo.title,
+    description: item.seo.description,
+    about: softwareId,
+  }),
+  howTo({
+    path,
+    name: item.steps.title,
+    description: item.overview,
+    steps: item.steps.steps,
+  }),
+  breadcrumbs([
+    { name: 'Home', path: '/' },
+    { name: integrationsHub.title, path: '/integrations' },
+    { name: item.name, path },
+  ]),
+  faqPage(item.faq),
+]
+---
+
+<BaseLayout
+  title={item.seo.title}
+  description={item.seo.description}
+  jsonLd={jsonLd}
+>
+  <PlatformHero hero={item.hero}>
+    <div
+      class="integration__visual"
+      slot="visual"
+    >
+      <LogoTile
+        logo={item.slug}
+        tilt={item.tilt}
+      />
+      <Tag>{item.kind}</Tag>
+    </div>
+  </PlatformHero>
+  <TextCardsSection
+    cards={[
+      {
+        title: `${item.name} in Unoff, in short`,
+        paragraphs: [item.overview],
+      },
+    ]}
+  />
+  <StepsSection
+    id={`${item.slug}-steps`}
+    steps={item.steps}
+  />
+  <TableSection table={item.table} />
+  <Faq
+    items={item.faq}
+    intro={`${item.name} in a Figma or Penpot plugin, in a few answers.`}
+  />
+  <NextSteps
+    steps={steps}
+    title="Related integrations"
+  />
+</BaseLayout>
+
+<style>
+  .integration__visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-gap-600);
+  }
+</style>

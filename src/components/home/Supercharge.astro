@@ -1,0 +1,360 @@
+---
+import shardsBox from '@/assets/decor/shards-box.svg'
+import EditorButton from '@/components/ui/EditorButton.astro'
+import FeatureCard from '@/components/ui/FeatureCard.astro'
+import LogoTile from '@/components/ui/LogoTile.astro'
+import { figmaUiStyle } from '@/data/editor-ui'
+import { supercharge } from '@/data/home'
+import type { LogoId } from '@/data/logos'
+
+const [cors, skills, flags] = supercharge.cards
+
+/** Services around the proxy: centre (px, in the 396 × 396 Figma group) and tilt. */
+const services: { logo: LogoId; x: number; y: number; tilt: number }[] = [
+  { logo: 'lemon-squeezy', x: 239, y: 106, tilt: 2 },
+  { logo: 'notion', x: 101, y: 236, tilt: 2 },
+  { logo: 'supabase', x: 295, y: 253, tilt: -2 },
+]
+
+/** Agents around the chat: offset from its centre (px), and tilt. */
+const agents: { logo: LogoId; x: number; y: string; tilt: number }[] = [
+  { logo: 'claude', x: -56, y: '-20px', tilt: -5 },
+  { logo: 'vscode', x: 60, y: '-35px', tilt: 5 },
+  { logo: 'windsurf', x: 50, y: 'calc(100% + 20px)', tilt: -5 },
+  { logo: 'cursor', x: -68, y: 'calc(100% + 36px)', tilt: 5 },
+]
+---
+
+<section
+  id="supercharge"
+  class="section mosaic"
+  aria-labelledby="supercharge-title"
+>
+  <div class="mosaic__grid supercharge__grid">
+    <FeatureCard
+      title={cors.title}
+      text={cors.text}
+      tag={cors.tag}
+      media="bottom"
+    >
+      <div class="illustration-lines">
+        <div class="supercharge__orbits illustration-fit">
+          <svg
+            viewBox="0 0 397 397"
+            aria-hidden="true"
+          >
+            <circle
+              class="supercharge__orbit"
+              cx="198.5"
+              cy="198.5"
+              r="198"></circle>
+            <circle
+              class="supercharge__orbit supercharge__orbit--inner"
+              cx="198.5"
+              cy="198.5"
+              r="74"
+              pathLength="48"></circle>
+          </svg>
+          <span class="supercharge__mark">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          {services.map(({ logo, x, y, tilt }, index) => (
+            <span
+              class="supercharge__around"
+              style={`--x:${x}px;--y:${y}px`}
+            >
+              <LogoTile
+                logo={logo}
+                size={48}
+                tilt={tilt}
+                index={index}
+                decorative
+              />
+            </span>
+          ))}
+        </div>
+      </div>
+    </FeatureCard>
+
+    <div class="mosaic__title title-card">
+      <h2
+        class="t-section-title"
+        id="supercharge-title"
+      >
+        {supercharge.title}
+      </h2>
+      <p class="t-accent">{supercharge.intro}</p>
+    </div>
+
+    <FeatureCard
+      title={skills.title}
+      text={skills.text}
+      media="bottom"
+    >
+      <div class="illustration-lines">
+        <div class="supercharge__chat code-pill illustration-fit">
+          <span class="supercharge__command">/skills</span>
+          <span class="supercharge__prompt">
+            Create a plugin following these specs
+          </span>
+          {agents.map(({ logo, x, y, tilt }, index) => (
+            <span
+              class="supercharge__agent"
+              style={`--x:${x}px;--y:${y}`}
+            >
+              <LogoTile
+                logo={logo}
+                size={48}
+                tilt={tilt}
+                index={index}
+                decorative
+              />
+            </span>
+          ))}
+        </div>
+      </div>
+    </FeatureCard>
+
+    <FeatureCard
+      title={flags.title}
+      text={flags.text}
+      tag={flags.tag}
+      media="bottom"
+    >
+      <div class="illustration-lines">
+        <div
+          class="supercharge__flags"
+          style={figmaUiStyle}
+        >
+          <span class="supercharge__blocked">
+            <EditorButton
+              editor="figma"
+              tilt={2}
+              disabled
+            />
+            <span class="supercharge__chip">Pro</span>
+          </span>
+          <span class="supercharge__flag">
+            <span
+              class="shards supercharge__flag-shards"
+              style={`mask-image:url(${shardsBox.src})`}
+            ></span>
+            <span class="code-pill">
+              <span class="supercharge__switch"></span>
+              isBlocked
+            </span>
+          </span>
+          <span class="supercharge__blocked">
+            <span class="supercharge__input">88EBF9</span>
+            <span class="supercharge__chip">Pro</span>
+          </span>
+        </div>
+      </div>
+    </FeatureCard>
+  </div>
+</section>
+
+<style>
+  .supercharge__grid {
+    --mosaic-columns: 2;
+  }
+
+  /* Two orbits around the unoff mark, taller than the frame on purpose: the
+     outer one is cropped, as in Figma "Supercharge/Cors". The floor on `top`
+     keeps the upper logo inside a short frame. */
+  .supercharge__orbits {
+    position: absolute;
+    top: max(50%, 124px);
+    left: 50%;
+    translate: -50% -50%;
+    width: 396px;
+    height: 396px;
+  }
+
+  .supercharge__orbits svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+
+  .supercharge__orbit {
+    fill: var(--card-background-color-default);
+    stroke: var(--site-border-soft);
+    stroke-width: var(--stroke-width-thin);
+  }
+
+  .supercharge__orbit--inner {
+    stroke-dasharray: 0.1 0.9;
+    stroke-linecap: round;
+  }
+
+  /* The unoff mark: three stacked cards on a light halo. */
+  .supercharge__mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border-radius: var(--site-radius-card);
+    background-color: var(--mark-halo);
+    width: 56px;
+    height: 60px;
+  }
+
+  .supercharge__mark span {
+    position: absolute;
+    top: var(--space-inset-100);
+    left: var(--space-inset-100);
+    border: var(--stroke-width-thick) solid var(--mark-edge);
+    border-radius: var(--border-radius-xxlarge);
+    background-color: var(--mark-back);
+    width: var(--control-size-1200);
+    height: 52px;
+    overflow: clip;
+  }
+
+  .supercharge__mark span:nth-child(2) {
+    background-color: var(--mark-middle);
+    height: 49px;
+  }
+
+  .supercharge__mark span:nth-child(3) {
+    background-color: var(--mark-front);
+    height: 46px;
+  }
+
+  .supercharge__mark span:nth-child(3)::after {
+    position: absolute;
+    inset: calc(-1 * var(--stroke-width-thick)) calc(-1 * var(--stroke-width-thick))
+      calc(-1 * var(--stroke-width-thick)) auto;
+    border: var(--stroke-width-thin) solid var(--mark-edge);
+    background-color: var(--mark-back);
+    width: var(--control-size-300);
+    content: '';
+  }
+
+  .supercharge__around {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    translate: -50% -50%;
+  }
+
+  .supercharge__chat {
+    gap: var(--space-gap-200);
+    width: 100%;
+    max-width: 552px;
+    font-weight: var(--text-weight-text);
+    font-family: var(--font-text);
+    letter-spacing: var(--text-body-tracking);
+  }
+
+  @container (max-width: 440px) {
+    .supercharge__chat {
+      flex: none;
+      width: 440px;
+    }
+  }
+
+  .supercharge__command {
+    flex: none;
+    border: var(--stroke-width-thin) solid var(--illustration-accent);
+    border-radius: var(--site-radius-inner);
+    background-color: var(--illustration-accent-soft);
+    padding: var(--space-inset-100) var(--space-inset-200);
+    color: var(--illustration-accent);
+  }
+
+  .supercharge__prompt {
+    color: var(--illustration-ink);
+  }
+
+  .supercharge__agent {
+    position: absolute;
+    top: var(--y);
+    left: calc(50% + var(--x));
+    translate: -50% -50%;
+  }
+
+  .supercharge__flags {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-gap-200);
+  }
+
+  .supercharge__blocked {
+    display: flex;
+    align-items: center;
+    gap: var(--space-gap-200);
+  }
+
+  .supercharge__chip {
+    border-radius: var(--border-radius-small);
+    background-color: var(--figma-chip);
+    padding: 0 var(--space-inset-100);
+    color: var(--figma-chip-ink);
+    font-weight: var(--text-weight-text);
+    font-size: var(--type-size-01);
+    line-height: var(--control-size-400);
+    font-family: var(--font-text);
+  }
+
+  .supercharge__input {
+    display: flex;
+    align-items: center;
+    gap: var(--space-gap-200);
+    border-radius: var(--border-radius-medium);
+    background-color: var(--figma-input);
+    padding: 0 var(--space-inset-200) 0 var(--space-inset-100);
+    width: 96px;
+    height: var(--control-size-600);
+    color: var(--figma-input-ink);
+    font-weight: var(--text-weight-text);
+    font-size: var(--type-size-02);
+    font-family: var(--font-text);
+  }
+
+  .supercharge__input::before {
+    opacity: 0.5;
+    box-shadow: inset 0 0 0 var(--stroke-width-thin) var(--shadow-color-black-alpha100);
+    border-radius: var(--border-radius-small);
+    background-color: var(--figma-swatch);
+    width: var(--control-size-400);
+    height: var(--control-size-400);
+    content: '';
+  }
+
+  .supercharge__flag {
+    position: relative;
+  }
+
+  .supercharge__flag-shards {
+    position: absolute;
+    inset: -38% -16% -32% -15%;
+  }
+
+  .supercharge__flag .code-pill {
+    position: relative;
+    gap: var(--space-gap-200);
+    color: var(--illustration-ink);
+  }
+
+  .supercharge__switch {
+    display: flex;
+    justify-content: flex-end;
+    border-radius: var(--site-radius-inner);
+    background-color: var(--illustration-accent);
+    padding: var(--space-inset-100);
+    width: 54px;
+  }
+
+  .supercharge__switch::after {
+    border-radius: var(--border-radius-medium);
+    background-color: var(--illustration-knob);
+    width: var(--control-size-600);
+    height: var(--control-size-600);
+    content: '';
+  }
+</style>

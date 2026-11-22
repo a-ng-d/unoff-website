@@ -1,0 +1,109 @@
+---
+/**
+ * Card with an illustration and the information (Figma "Card/Feature"). With
+ * `href`, the whole card is the link.
+ */
+import Tag from '@/components/ui/Tag.astro'
+
+interface Props {
+  title: string
+  text: string
+  tag?: string
+  href?: string
+  id?: string
+  /** Where the illustration sits: above the text (Wire) or below it (Shape, Supercharge). */
+  media?: 'top' | 'bottom'
+  class?: string
+}
+
+const {
+  title,
+  text,
+  tag,
+  href,
+  id,
+  media = 'top',
+  class: className,
+} = Astro.props
+const titleId = id ? `${id}-title` : undefined
+const Root = href ? 'a' : 'article'
+const hasMedia = Astro.slots.has('default')
+---
+
+<Root
+  class:list={[
+    'feature',
+    `feature--media-${media}`,
+    href ? 'card' : 'surface-card',
+    className,
+  ]}
+  href={href}
+  id={id}
+  aria-labelledby={href ? titleId : undefined}
+>
+  {hasMedia && (
+    <div
+      class="feature__media"
+      aria-hidden="true"
+    >
+      <slot />
+    </div>
+  )}
+  <div class="feature__info">
+    {tag && <Tag>{tag}</Tag>}
+    <h3
+      class="t-paragraph-secondary-title"
+      id={titleId}
+    >
+      {title}
+    </h3>
+    <p class="t-accent">{text}</p>
+  </div>
+</Root>
+
+<style>
+  .feature {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    color: var(--site-ink);
+    text-decoration: none;
+  }
+
+  .feature__media {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding: var(--space-inset-800);
+    min-height: 180px;
+  }
+
+  .feature__media > :global(*) {
+    flex: 1 1 auto;
+  }
+
+  .feature__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-gap-400);
+    margin-top: auto;
+    padding: var(--space-inset-800);
+  }
+
+  .feature--media-bottom .feature__media {
+    order: 1;
+    min-height: 280px;
+  }
+
+  .feature--media-bottom .feature__info {
+    margin-top: 0;
+  }
+
+  @media (max-width: 639.98px) {
+    .feature__media,
+    .feature__info {
+      padding: var(--space-inset-600);
+    }
+  }
+</style>

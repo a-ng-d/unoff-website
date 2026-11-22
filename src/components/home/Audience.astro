@@ -1,0 +1,72 @@
+---
+import CheckIcon from '@lucide/astro/icons/check'
+import { audience } from '@/data/home'
+---
+
+<section
+  class="section mosaic"
+  aria-labelledby="audience-title"
+>
+  <div class="mosaic__grid audience__grid">
+    <div class="mosaic__title mosaic__tall title-card title-card--straight">
+      <h2
+        class="t-section-title"
+        id="audience-title"
+      >
+        {audience.title}
+      </h2>
+      <p class="t-accent">{audience.intro}</p>
+    </div>
+
+    {audience.personas.map((persona) => (
+      <article class="audience__card mosaic__tall surface-card">
+        <h3 class="t-paragraph-primary-title">{persona.title}</h3>
+        <p class="t-accent">{persona.text}</p>
+        <ul class="audience__list">
+          {persona.points.map((point) => (
+            <li>
+              <CheckIcon aria-hidden="true" />
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .audience__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-gap-400);
+    padding: var(--space-inset-800);
+  }
+
+  .audience__list {
+    display: grid;
+    gap: var(--space-gap-400);
+    margin-top: var(--space-gap-400);
+    padding: 0;
+    list-style: none;
+  }
+
+  .audience__list li {
+    display: flex;
+    gap: var(--space-gap-200);
+  }
+
+  .audience__list :global(svg) {
+    flex-shrink: 0;
+    width: var(--control-icon-600);
+    height: var(--control-icon-600);
+    color: var(--color-icon-brand-default);
+  }
+
+  @media (max-width: 639.98px) {
+    .audience__card {
+      padding: var(--space-inset-600);
+    }
+  }
+</style>

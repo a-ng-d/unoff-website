@@ -1,0 +1,103 @@
+---
+import PlusIcon from '@lucide/astro/icons/plus'
+import CloseIcon from '@lucide/astro/icons/x'
+import IntroCardSection from '@/components/ui/IntroCardSection.astro'
+import type { FaqItem } from '@/data/faq'
+
+interface Props {
+  items: FaqItem[]
+  title?: string
+  intro?: string
+}
+
+const {
+  items,
+  title = 'FAQ',
+  intro = "What's free, what's not, and how fast you'll actually ship.",
+} = Astro.props
+---
+
+<IntroCardSection
+  id="faq"
+  title={title}
+  intro={intro}
+>
+  {items.map((item) => (
+    <details
+      class="faq__item"
+      name="faq"
+    >
+      <summary class="faq__question">
+        <h3 class="t-accent">{item.question}</h3>
+        <!-- A real <button> inside <summary> would swallow the click. -->
+        <span
+          class="faq__toggle icon-button icon-button--default"
+          aria-hidden="true"
+        >
+          <PlusIcon class="faq__toggle-open" />
+          <CloseIcon class="faq__toggle-close" />
+        </span>
+      </summary>
+      <div
+        class="faq__answer"
+        set:html={item.answer}
+      />
+    </details>
+  ))}
+</IntroCardSection>
+
+<style>
+  .faq__item {
+    border-bottom: var(--stroke-width-thin) solid var(--site-border-strong);
+    padding-block: var(--space-inset-400);
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    gap: var(--space-gap-400);
+    cursor: pointer;
+    padding-block: var(--space-inset-400);
+    list-style: none;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__question h3 {
+    flex: 1 1 auto;
+    font-weight: inherit;
+  }
+
+  .faq__toggle {
+    flex-shrink: 0;
+    color: var(--icon-button-base-icon-color);
+  }
+
+  .faq__toggle :global(svg) {
+    width: var(--icon-button-base-icon-width);
+    height: var(--icon-button-base-icon-width);
+  }
+
+  .faq__toggle :global(.faq__toggle-close),
+  .faq__item[open] .faq__toggle :global(.faq__toggle-open) {
+    display: none;
+  }
+
+  .faq__item[open] .faq__toggle :global(.faq__toggle-close) {
+    display: block;
+  }
+
+  .faq__answer {
+    padding-bottom: var(--space-inset-400);
+  }
+
+  .faq__answer :global(code) {
+    font-family: var(--font-display);
+  }
+
+  .faq__answer :global(a) {
+    text-decoration: underline;
+  }
+</style>

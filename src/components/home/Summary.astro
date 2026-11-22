@@ -1,0 +1,174 @@
+---
+import Button from '@/components/ui/Button.astro'
+import IconTile from '@/components/ui/IconTile.astro'
+import LineGrid from '@/components/ui/LineGrid.astro'
+import TertiaryLink from '@/components/ui/TertiaryLink.astro'
+import { summary } from '@/data/home'
+---
+
+<section
+  class="section summary"
+  aria-labelledby="summary-title"
+>
+  <div class="summary__grid">
+    <div class="summary__intro title-card">
+      <h2
+        class="t-section-title"
+        id="summary-title"
+      >
+        {summary.title}
+      </h2>
+      <p class="t-accent">{summary.intro}</p>
+    </div>
+
+    <div
+      class="summary__demo surface-card"
+      data-consent-frame
+    >
+      <LineGrid
+        class="summary__lines"
+        count={56}
+      >
+        <div class="summary__consent">
+          <p class="t-paragraph-secondary-title">{summary.demo.title}</p>
+          <p>
+            Interactive demo hosted by Supademo. It loads once you accept its
+            cookies.
+          </p>
+          <div class="summary__actions">
+            <Button
+              data-consent-accept="demo"
+              hidden
+            >
+              Load the demo
+            </Button>
+            <TertiaryLink
+              href={summary.demo.src}
+              label="Open on Supademo"
+            />
+          </div>
+        </div>
+      </LineGrid>
+      <iframe
+        class="summary__embed"
+        data-consent-src={summary.demo.src}
+        title={summary.demo.title}
+        loading="lazy"
+        allow="clipboard-write"
+        allowfullscreen></iframe>
+    </div>
+
+    {summary.cards.map((card) => (
+      <a
+        class="summary__card card"
+        href={card.href}
+      >
+        <IconTile icon={card.icon} />
+        <h3 class="t-paragraph-primary-title">{card.title}</h3>
+        <p class="t-accent">{card.text}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .summary__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(416px, auto);
+    gap: var(--space-gap-200);
+  }
+
+  .summary__intro {
+    grid-row: span 2;
+  }
+
+  .summary__demo {
+    position: relative;
+    grid-column: span 2;
+    grid-row: span 2;
+    padding: var(--space-inset-200);
+  }
+
+  .summary__demo :global(.summary__lines) {
+    height: 100%;
+  }
+
+  /* Loaded on consent only (scripts/consent.ts), then fills the cell. */
+  .summary__embed {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .summary__demo[data-loaded] .summary__embed {
+    display: block;
+  }
+
+  .summary__consent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-gap-400);
+    padding: var(--space-inset-800);
+    max-width: 560px;
+    text-align: center;
+  }
+
+  .summary__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-gap-400);
+  }
+
+  .summary__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: var(--space-gap-400);
+    padding: var(--space-inset-800);
+    color: var(--site-ink);
+    text-decoration: none;
+  }
+
+  @media (max-width: 1023.98px) {
+    .summary__grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-auto-rows: auto;
+    }
+
+    .summary__intro,
+    .summary__demo {
+      grid-row: auto;
+      grid-column: auto;
+    }
+
+    .summary__intro {
+      min-height: 320px;
+    }
+
+    .summary__demo {
+      min-height: max(420px, 60vw);
+    }
+
+    .summary__card {
+      min-height: 280px;
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    .summary__consent {
+      padding: var(--space-inset-400);
+    }
+
+    .summary__card {
+      padding: var(--space-inset-600);
+    }
+  }
+</style>

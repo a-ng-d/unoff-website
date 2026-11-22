@@ -1,0 +1,218 @@
+---
+import BicepsFlexed from '@lucide/astro/icons/biceps-flexed'
+import BookOpen from '@lucide/astro/icons/book-open'
+import BookOpenText from '@lucide/astro/icons/book-open-text'
+import BotMessageSquare from '@lucide/astro/icons/bot-message-square'
+import Component from '@lucide/astro/icons/component'
+import Headset from '@lucide/astro/icons/headset'
+import LockOpen from '@lucide/astro/icons/lock-open'
+import Milestone from '@lucide/astro/icons/milestone'
+import ArrowRight from '@lucide/astro/icons/move-right'
+import Plus from '@lucide/astro/icons/plus'
+import Presentation from '@lucide/astro/icons/presentation'
+import Terminal from '@lucide/astro/icons/terminal'
+import TestTubeDiagonal from '@lucide/astro/icons/test-tube-diagonal'
+import UsersRound from '@lucide/astro/icons/users-round'
+import Button from '@/components/ui/Button.astro'
+import Tag from '@/components/ui/Tag.astro'
+import { plans, pricing, type PlanIcon } from '@/data/pricing'
+
+const icons = {
+  terminal: Terminal,
+  'book-open': BookOpen,
+  'bot-message-square': BotMessageSquare,
+  'users-round': UsersRound,
+  'lock-open': LockOpen,
+  'book-open-text': BookOpenText,
+  'biceps-flexed': BicepsFlexed,
+  plus: Plus,
+  presentation: Presentation,
+  headset: Headset,
+  milestone: Milestone,
+  figma: Component,
+  'test-tube-diagonal': TestTubeDiagonal,
+} satisfies Record<PlanIcon, unknown>
+---
+
+<section
+  id="pricing"
+  class="section mosaic"
+  aria-labelledby="pricing-title"
+>
+  <div class="mosaic__grid pricing__grid">
+    <div class="mosaic__title mosaic__tall title-card title-card--straight">
+      <h2
+        class="t-section-title"
+        id="pricing-title"
+      >
+        {pricing.title}
+      </h2>
+      <p class="t-accent">{pricing.intro}</p>
+    </div>
+
+    {plans.map((plan) => (
+      <article
+        class:list={[
+          'plan surface-card',
+          `plan--${plan.id}`,
+          { 'mosaic__tall': plan.id === 'learner' },
+        ]}
+        aria-labelledby={`plan-${plan.id}`}
+      >
+        {plan.badge && <span class="plan__badge">{plan.badge}</span>}
+        <div class="plan__info">
+          <Tag as="p">
+            <span id={`plan-${plan.id}`}>{plan.tag}</span>
+          </Tag>
+          <p class="plan__price t-paragraph-primary-title">
+            {plan.listPrice && (
+              <s class="plan__list-price">
+                <span class="visually-hidden">Instead of </span>
+                {plan.listPrice}
+              </s>
+            )}
+            {plan.price}
+          </p>
+          {plan.period && <p class="plan__period">{plan.period}</p>}
+          {plan.summary && <p class="t-accent">{plan.summary}</p>}
+          <ul class="plan__features">
+            {plan.features.map((feature) => {
+              const Icon = icons[feature.icon]
+              return (
+                <li>
+                  <Icon aria-hidden="true" />
+                  <span>{feature.text}</span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+        {plan.cta && (
+          <div class="plan__action">
+            <Button
+              href={plan.cta.href}
+              variant={plan.id === 'learner' ? 'primary' : 'secondary'}
+              block
+            >
+              {plan.cta.label}
+              {plan.id === 'learner' && <ArrowRight slot="icon-end" />}
+            </Button>
+          </div>
+        )}
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .pricing__grid {
+    grid-template-areas:
+      'title hobby learner'
+      'title supporter learner';
+  }
+
+  .pricing__grid > .mosaic__title {
+    grid-area: title;
+  }
+
+  .plan--hobby {
+    grid-area: hobby;
+  }
+
+  .plan--supporter {
+    grid-area: supporter;
+  }
+
+  .plan--learner {
+    grid-area: learner;
+  }
+
+  .plan {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-gap-600);
+    padding: var(--space-inset-800);
+  }
+
+  .plan__badge {
+    position: absolute;
+    top: var(--space-inset-800);
+    right: var(--space-inset-800);
+    border-radius: var(--site-radius-pill);
+    background-color: var(--color-background-brand-default);
+    padding: var(--space-inset-100) var(--space-inset-400);
+    color: var(--color-text-on-brand-default);
+  }
+
+  .plan__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-gap-400);
+  }
+
+  .plan__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-gap-400);
+  }
+
+  .plan__list-price {
+    color: var(--color-text-tertiary-default);
+    font-size: var(--text-accent-size);
+  }
+
+  .plan__period {
+    color: var(--color-text-secondary-default);
+  }
+
+  .plan__features {
+    display: grid;
+    gap: var(--space-gap-400);
+    padding: 0;
+    list-style: none;
+  }
+
+  .plan__features li {
+    display: flex;
+    gap: var(--space-gap-200);
+  }
+
+  .plan__features :global(svg) {
+    flex-shrink: 0;
+    width: var(--control-icon-600);
+    height: var(--control-icon-600);
+    color: var(--color-icon-brand-default);
+  }
+
+  .plan__action {
+    display: flex;
+  }
+
+  @media (max-width: 1023.98px) {
+    .pricing__grid {
+      grid-template-areas:
+        'title title'
+        'hobby learner'
+        'supporter learner';
+    }
+  }
+
+  @media (max-width: 639.98px) {
+    .pricing__grid {
+      grid-template-areas: 'title' 'hobby' 'learner' 'supporter';
+    }
+
+    .plan {
+      padding: var(--space-inset-600);
+    }
+
+    .plan__badge {
+      top: var(--space-inset-600);
+      right: var(--space-inset-600);
+    }
+  }
+</style>

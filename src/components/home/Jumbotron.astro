@@ -1,0 +1,138 @@
+---
+import ArrowRight from '@lucide/astro/icons/move-right'
+import FigmaIcon from '@/assets/icons/figma-line.svg'
+import PenpotIcon from '@/assets/icons/pencil-line.svg'
+import Button from '@/components/ui/Button.astro'
+import LineGrid from '@/components/ui/LineGrid.astro'
+import Tag from '@/components/ui/Tag.astro'
+import { links } from '@/config/site'
+import { hero } from '@/data/home'
+---
+
+<section
+  class="hero"
+  aria-labelledby="hero-title"
+>
+  <LineGrid class="hero__grid">
+    <div class="hero__content">
+      <div class="hero__texts">
+        <h1
+          class="t-main-title"
+          id="hero-title"
+        >
+          {hero.title}
+        </h1>
+        <p class="t-tagline">{hero.tagline}</p>
+      </div>
+      <p class="hero__code code-snippet">
+        <span aria-hidden="true">$</span>
+        <code
+          ><span class="code-snippet__command">unoff</span>{' '}<span
+            class="code-snippet__verb">create</span
+          >{' '}<span class="code-snippet__argument"
+            >&lt;figma-plugin|penpot-plugin&gt;</span
+          ></code
+        >
+      </p>
+      <div class="hero__cta">
+        <Button
+          href={links.docs}
+          variant="primary"
+          block
+        >
+          Get started
+          <ArrowRight slot="icon-end" />
+        </Button>
+        <div class="hero__tags">
+          <Tag
+            href="/figma"
+            tone="brand"
+          >
+            <FigmaIcon
+              slot="start"
+              aria-hidden="true"
+            />
+            Available for Figma
+          </Tag>
+          <Tag
+            href="/penpot"
+            tone="brand"
+          >
+            <PenpotIcon
+              slot="start"
+              aria-hidden="true"
+            />
+            Available for Penpot
+          </Tag>
+        </div>
+      </div>
+    </div>
+  </LineGrid>
+</section>
+
+<style>
+  .hero {
+    padding: var(--space-inset-200) var(--layout-gutter) 0;
+  }
+
+  .hero :global(.hero__grid) {
+    min-height: clamp(640px, calc(100svh - var(--layout-header-height)), 1096px);
+  }
+
+  .hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gap-800);
+    padding: var(--space-inset-800);
+    width: 100%;
+    max-width: calc(var(--layout-content-max) + 2 * var(--space-inset-800));
+  }
+
+  .hero__texts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gap-400);
+  }
+
+  .hero__code {
+    display: flex;
+    gap: var(--space-gap-600);
+    border-radius: var(--site-radius-card);
+    padding: var(--space-inset-800);
+    font-weight: var(--text-weight-display);
+    font-size: var(--text-code-size);
+    line-height: 1.3;
+    letter-spacing: var(--text-paragraph-secondary-title-tracking);
+  }
+
+  .hero__code code {
+    font: inherit;
+  }
+
+  .hero__cta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gap-200);
+  }
+
+  .hero__cta > :global(.site-button) {
+    flex: 0 0 auto;
+  }
+
+  .hero__tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-gap-200);
+  }
+
+  @media (max-width: 639.98px) {
+    .hero__content {
+      padding: var(--space-inset-800) var(--space-inset-400);
+    }
+
+    .hero__code {
+      padding: var(--space-inset-400);
+    }
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+import type { GetStaticPaths } from 'astro'
+import IntegrationPageView from '@/components/integrations/IntegrationPageView.astro'
+import { integrations } from '@/data/integrations'
+
+export const getStaticPaths = (() =>
+  integrations.map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }))) satisfies GetStaticPaths
+
+const { item } = Astro.props
+---
+
+<IntegrationPageView item={item} />
