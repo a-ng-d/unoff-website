@@ -17,7 +17,14 @@ npm run preview
 ## Deploy (Netlify)
 
 `netlify.toml` holds everything: build command `npm run build`, publish directory `dist`,
-Node 24, long cache on `/_astro/*` and security headers. No environment variable is needed.
+Node 24, long cache on `/_astro/*`, security headers and redirects. Netlify builds every
+push to `master` and a deploy preview for every pull request (`master` only takes pull
+requests).
+
+The only environment variable is optional: `CONSENT_STATS_TOKEN` (see `.env.example`)
+protects the reading of the cookie banner counts, `GET /api/consent?days=28`
+(`netlify/functions/consent.mjs`). Without it, the counts are still recorded but cannot
+be read.
 
 After the first production deploy on `unoff.dev`:
 
@@ -38,4 +45,4 @@ After the first production deploy on `unoff.dev`:
 
 ## License
 
-MPL 2.0, Yelbolt.
+[MPL 2.0](LICENSE), Yelbolt.

@@ -5,6 +5,12 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# The Figma Sites version served /sitemap.xml; Search Console and crawlers still request it.
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap-index.xml"
+  status = 301
+
 # Hashed build assets never change: cache them for a year.
 [[headers]]
   for = "/_astro/*"
