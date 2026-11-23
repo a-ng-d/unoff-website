@@ -79,7 +79,7 @@ Port a fix made in one repo to the others:
 - `src/styles/global.css`, `motion.css`, `unoff-links.css`, `consent.css`; `src/scripts/reveal.ts`
 - `src/components/seo/Seo.astro`; `src/components/ui/` Button, TertiaryLink, Tag,
   IconTile, IntroCardSection, StackSection, StepsSection, TableSection, TextCardsSection,
-  CodeSnippet
+  CodeSnippet, LogoTile (from here; `src/data/logos.ts` keeps each repo's own logos)
 - `src/data/structured-data.ts` (generic builders), `src/plugins/sitemap-lastmod.mjs`
 - `postcss.config.mjs`, `astro.config.mjs`, `scripts/unoff-tokens.mjs`
 - `netlify/dev-functions.mjs`, `netlify/functions/consent.mjs` (counter of the banner's
