@@ -21,6 +21,38 @@ const loadDemos = () => {
   }
 }
 
+/**
+ * Anonymous count of the banner's outcomes (netlify/functions/consent.mjs):
+ * no cookie, no identifier, so it runs whatever the visitor picks. The site
+ * has no analytics: `shown` is its only audience figure. Production builds
+ * only.
+ */
+type ConsentEvent = 'shown' | 'accept_all' | 'reject' | 'custom'
+const track = (event: ConsentEvent) => {
+  if (!import.meta.env.PROD) return
+  try {
+    navigator.sendBeacon('/api/consent', event)
+  } catch {
+    // Counting is best effort: never break the banner for it.
+  }
+}
+
+/** One `shown` per session, not one per page browsed without choosing. */
+const trackShown = () => {
+  const key = 'unoff-consent-shown'
+  try {
+    if (sessionStorage.getItem(key)) return
+    sessionStorage.setItem(key, '1')
+  } catch {
+    // Storage blocked: count it anyway, a duplicate beats a missing count.
+  }
+  track('shown')
+}
+
+/** `demo` is the only optional category, so `custom` never occurs here. */
+const choiceOf = (categories: string[]): ConsentEvent =>
+  categories.includes('demo') ? 'accept_all' : 'reject'
+
 const apply = () => {
   if (CookieConsent.acceptedCategory('demo')) loadDemos()
 }
@@ -51,6 +83,13 @@ void CookieConsent.run({
     necessary: { enabled: true, readOnly: true },
     demo: {},
   },
+  // The footer reopens the preferences modal for people who already chose:
+  // only the first-visit banner counts as `shown`.
+  onModalShow: ({ modalName }) => {
+    if (modalName === 'consentModal' && !CookieConsent.validConsent())
+      trackShown()
+  },
+  onFirstConsent: ({ cookie }) => track(choiceOf(cookie.categories)),
   onConsent: apply,
   onChange: ({ changedCategories }) => {
     // A player that is already running can't be unloaded: reload to drop it.

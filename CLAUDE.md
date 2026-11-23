@@ -82,6 +82,8 @@ Port a fix made in one repo to the others:
   CodeSnippet
 - `src/data/structured-data.ts` (generic builders), `src/plugins/sitemap-lastmod.mjs`
 - `postcss.config.mjs`, `astro.config.mjs`, `scripts/unoff-tokens.mjs`
+- `netlify/dev-functions.mjs`, `netlify/functions/consent.mjs` (counter of the banner's
+  outcomes, read with `CONSENT_STATS_TOKEN`)
 
 Diverged on purpose here: `tokens.css` (roles on `[data-mode]`), `BaseLayout` +
 `scripts/scheme.ts` (mode from `site.mode`), `Button` (`icon-end` slot), `StackSection`
