@@ -1,15 +1,50 @@
 import 'vanilla-cookieconsent/dist/cookieconsent.css'
 import '@/styles/consent.css'
 import * as CookieConsent from 'vanilla-cookieconsent'
-import { links } from '@/config/site'
+import { site, links } from '@/config/site'
 
 /**
  * Consent banner (vanilla-cookieconsent), as on UI Color Palette, and the only
  * place where third-party content is loaded. Nothing is requested before the
  * visitor accepts:
- *  - demo → the Supademo player of the home page
+ *  - analytics → Google Analytics 4 (gtag.js)
+ *  - demo      → the Supademo player of the home page
  *    (`iframe[data-consent-src]`, its URL is set on consent).
+ * Analytics runs in production builds only, so local, preview and CI pages
+ * never hit the live property.
  */
+
+/** Analytics runs in production, or locally when PUBLIC_THIRD_PARTY=true. */
+const analyticsEnabled =
+  import.meta.env.PROD || import.meta.env.PUBLIC_THIRD_PARTY === 'true'
+
+type GtagWindow = Window & {
+  dataLayer?: unknown[]
+  gtag?: (...args: unknown[]) => void
+}
+const w = window as GtagWindow
+
+let analyticsLoaded = false
+const loadAnalytics = () => {
+  if (analyticsLoaded || !analyticsEnabled) return
+  analyticsLoaded = true
+  w.dataLayer = w.dataLayer || []
+  w.gtag = function () {
+    // gtag.js reads `arguments` objects from the dataLayer, not arrays.
+    // eslint-disable-next-line prefer-rest-params
+    w.dataLayer!.push(arguments)
+  }
+  w.gtag('consent', 'default', {
+    ad_storage: 'denied',
+    analytics_storage: 'granted',
+  })
+  w.gtag('js', new Date())
+  w.gtag('config', site.googleAnalyticsId)
+  const script = document.createElement('script')
+  script.async = true
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${site.googleAnalyticsId}`
+  document.head.appendChild(script)
+}
 
 const loadDemos = () => {
   for (const frame of document.querySelectorAll<HTMLIFrameElement>(
@@ -23,9 +58,8 @@ const loadDemos = () => {
 
 /**
  * Anonymous count of the banner's outcomes (netlify/functions/consent.mjs):
- * no cookie, no identifier, so it runs whatever the visitor picks. The site
- * has no analytics: `shown` is its only audience figure. Production builds
- * only.
+ * no cookie, no identifier, so it runs whatever the visitor picks. It tells
+ * how much of the audience Google Analytics can't see. Production builds only.
  */
 type ConsentEvent = 'shown' | 'accept_all' | 'reject' | 'custom'
 const track = (event: ConsentEvent) => {
@@ -49,11 +83,16 @@ const trackShown = () => {
   track('shown')
 }
 
-/** `demo` is the only optional category, so `custom` never occurs here. */
-const choiceOf = (categories: string[]): ConsentEvent =>
-  categories.includes('demo') ? 'accept_all' : 'reject'
+const choiceOf = (categories: string[]): ConsentEvent => {
+  const optional = categories.filter((c) => c !== 'necessary')
+  if (optional.length === 0) return 'reject'
+  if (optional.includes('analytics') && optional.includes('demo'))
+    return 'accept_all'
+  return 'custom'
+}
 
 const apply = () => {
+  if (CookieConsent.acceptedCategory('analytics')) loadAnalytics()
   if (CookieConsent.acceptedCategory('demo')) loadDemos()
 }
 
@@ -75,12 +114,16 @@ for (const button of document.querySelectorAll<HTMLButtonElement>(
 const privacy = `<a href="${links.privacy}" target="_blank" rel="noopener">Privacy Policy</a>`
 
 void CookieConsent.run({
+  autoClearCookies: true,
   guiOptions: {
     consentModal: { layout: 'box inline', position: 'bottom right' },
     preferencesModal: { layout: 'box' },
   },
   categories: {
     necessary: { enabled: true, readOnly: true },
+    analytics: {
+      autoClear: { cookies: [{ name: /^_ga/ }] },
+    },
     demo: {},
   },
   // The footer reopens the preferences modal for people who already chose:
@@ -92,7 +135,7 @@ void CookieConsent.run({
   onFirstConsent: ({ cookie }) => track(choiceOf(cookie.categories)),
   onConsent: apply,
   onChange: ({ changedCategories }) => {
-    // A player that is already running can't be unloaded: reload to drop it.
+    // A script or player that is already running can't be unloaded: reload to drop it.
     const revoked = changedCategories.some(
       (c) => !CookieConsent.acceptedCategory(c)
     )
@@ -106,7 +149,7 @@ void CookieConsent.run({
         consentModal: {
           title: 'Cookies, your call',
           description:
-            'The interactive demo is hosted by Supademo, which counts views and may set cookies. It loads only if you accept.',
+            'We use optional cookies to measure audience (Google Analytics) and to play the interactive demo (Supademo). Nothing optional loads until you accept.',
           acceptAllBtn: 'Accept all',
           acceptNecessaryBtn: 'Reject all',
           showPreferencesBtn: 'Customize',
@@ -128,6 +171,12 @@ void CookieConsent.run({
               description:
                 'Remember your choice here and your light or dark mode. Always on.',
               linkedCategory: 'necessary',
+            },
+            {
+              title: 'Analytics',
+              description:
+                'Google Analytics 4 tells us which pages are read, so we can improve the site.',
+              linkedCategory: 'analytics',
             },
             {
               title: 'Interactive demo',

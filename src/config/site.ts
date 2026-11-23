@@ -33,6 +33,7 @@ export const site = {
     name: 'Yelbolt',
     url: 'https://yelbolt.co/',
   },
+  googleAnalyticsId: 'G-VTJTY0H41C',
   /** Google Search Console verification, or null when the domain is verified by DNS. */
   googleSiteVerification: null as string | null,
 } as const
