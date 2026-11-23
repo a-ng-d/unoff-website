@@ -1,5 +1,7 @@
 # unoff.dev
 
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
+
 The website of [Unoff](https://unoff.dev), the toolkit to build, ship and monetize Figma
 and Penpot plugins. Static [Astro](https://astro.build) site on the
 [@unoff/ui](https://ui.unoff.dev) design system, deployed on Netlify.
