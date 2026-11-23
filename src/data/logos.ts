@@ -12,7 +12,7 @@ import penpot from '@/assets/platforms/penpot.svg'
 import sketch from '@/assets/platforms/sketch.svg'
 import claude from '@/assets/ai/claude.svg'
 import cursor from '@/assets/ai/cursor.svg'
-import vscode from '@/assets/ai/vscode.png'
+import vscode from '@/assets/ai/vscode.jpg'
 import windsurf from '@/assets/ai/windsurf.svg'
 import shardsA from '@/assets/decor/shards-a.svg'
 import shardsB from '@/assets/decor/shards-b.svg'
@@ -43,4 +43,10 @@ export const logos = {
 
 export type LogoId = keyof typeof logos
 
-export const shards = [shardsA, shardsB, shardsC]
+/** Each SVG has its own aspect ratio: the inset (top right bottom left, % of the
+    tile) must match it, or the mask stretches the rays. */
+export const shards = [
+  { src: shardsA, inset: '-64.48% -51.32% -48.24% -54.32%' },
+  { src: shardsB, inset: '-45.41% -47.26% -43.85% -45.58%' },
+  { src: shardsC, inset: '-47.25% -54.13% -40.22% -49.83%' },
+]

@@ -279,7 +279,7 @@ button {
 }
 
 /* Brand logo on its tile, slightly tilted, with sparkling shards around it.
-   `--tile` is the brand's own colour (allowed exception, see tokens.css). */
+   `--tile` is the brand's own colour (allowed exception), from `data/logos.ts`. */
 .logo-tile {
   display: grid;
   position: relative;
@@ -305,7 +305,6 @@ button {
 
 .logo-tile .shards {
   position: absolute;
-  inset: -48% -54% -40% -50%;
   z-index: -1;
 }
 

@@ -9,6 +9,8 @@ interface Props {
   size?: number
   /** Position in a row: picks the shard shape and phase-shifts the sparkle. */
   index?: number
+  /** Index in `shards`, when the design fixes the shape instead of the position. */
+  shard?: number
   /** Decorative when the card already names the brand. */
   decorative?: boolean
 }
@@ -18,10 +20,11 @@ const {
   tilt = 0,
   size = 64,
   index = 0,
+  shard = index,
   decorative = false,
 } = Astro.props
 const item = logos[logo]
-const ray = shards[index % shards.length]
+const ray = shards[shard % shards.length]
 ---
 
 <span
@@ -31,7 +34,7 @@ const ray = shards[index % shards.length]
   <span
     class="shards"
     aria-hidden="true"
-    style={`mask-image:url(${ray.src});--sparkle-delay:${index * 0.35}s`}
+    style={`inset:${ray.inset};mask-image:url(${ray.src.src});--sparkle-delay:${index * 0.35}s`}
   ></span>
   <img
     src={item.src.src}
