@@ -1,6 +1,9 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/0cf4bd50-99d4-4efa-988a-de0f0e397a4c/deploy-status)](https://app.netlify.com/projects/unoff/deploys)
 # Unoff - Website
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0cf4bd50-99d4-4efa-988a-de0f0e397a4c/deploy-status)](https://app.netlify.com/projects/unoff/deploys)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
+
 The website of [Unoff](https://unoff.dev), the toolkit to build, ship and monetize Figma
 and Penpot plugins. Static [Astro](https://astro.build) site on the
 [@unoff/ui](https://ui.unoff.dev) design system, deployed on Netlify.
@@ -18,7 +21,14 @@ npm run preview
 ## Deploy (Netlify)
 
 `netlify.toml` holds everything: build command `npm run build`, publish directory `dist`,
-Node 24, long cache on `/_astro/*` and security headers. No environment variable is needed.
+Node 24, long cache on `/_astro/*`, security headers and redirects. Netlify builds every
+push to `master` and a deploy preview for every pull request (`master` only takes pull
+requests).
+
+The only environment variable is optional: `CONSENT_STATS_TOKEN` (see `.env.example`)
+protects the reading of the cookie banner counts, `GET /api/consent?days=28`
+(`netlify/functions/consent.mjs`). Without it, the counts are still recorded but cannot
+be read.
 
 After the first production deploy on `unoff.dev`:
 
@@ -39,4 +49,4 @@ After the first production deploy on `unoff.dev`:
 
 ## License
 
-MPL 2.0, Yelbolt.
+[MPL 2.0](LICENSE), Yelbolt.
