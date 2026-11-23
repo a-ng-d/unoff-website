@@ -1,4 +1,5 @@
-# unoff.dev
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0cf4bd50-99d4-4efa-988a-de0f0e397a4c/deploy-status)](https://app.netlify.com/projects/unoff/deploys)
+# Unoff - Website
 
 The website of [Unoff](https://unoff.dev), the toolkit to build, ship and monetize Figma
 and Penpot plugins. Static [Astro](https://astro.build) site on the
